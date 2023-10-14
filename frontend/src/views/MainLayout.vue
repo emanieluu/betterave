@@ -15,7 +15,7 @@
       </div>
       
       <h1>{{ headerTitle }}</h1>
-      <ProfilePill :userEmail="user.email" :userProfilePic="user.profile_pic" />
+      <ProfilePill :userEmail="user.email" :userProfilePic="user.profile_pic" :userType="user.user_type" />
     </header>
     <router-view @updateTitle="setTitle" />
   </div>
@@ -37,7 +37,9 @@ export default {
       user: {
         name: '',
         email: '',
+        surname :'',
         profile_pic: '',
+        user_type:''
       },
       headerTitle: ref("Welcome to Betterave!")
     };
@@ -46,6 +48,7 @@ export default {
     try {
       const response = await axios.get('http://127.0.0.1:5000/profile', { withCredentials: true });
       this.user = response.data;
+      console.log("user Response:",response.data);
     } catch (error) {
       console.error("There was an error fetching user data:", error);
     }

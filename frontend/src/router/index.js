@@ -1,8 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import HomePage from '../views/HomePage.vue'
+import StudentDashboard from '../views/StudentDashboard.vue'
+import TeacherDashboard from '../views/TeacherDashboard.vue'
+import AssoDashboard from '../views/AssoDashboard.vue'
+import AdminDashboard from '../views/AdminDashboard.vue'
 import Photochart from '../views/Photochart.vue'
 import ClassPage from '../views/ClassPage.vue'
+import ClassTeached from '../views/ClassTeached.vue'
 import MainLayout from '../views/MainLayout.vue'
 import axios from 'axios';
 
@@ -15,6 +20,32 @@ const routes = [
         path: '', 
         name: 'homepage',
         component: HomePage
+      },
+      {
+        path: 'student-dashboard', 
+        name: 'student-dashboard',
+        component: StudentDashboard
+      },
+      {
+        path: 'teacher-dashboard', 
+        name: 'teacherDashboard',
+        component: TeacherDashboard
+      },
+      {
+        path: 'asso-dashboard', 
+        name: 'assoDashboard',
+        component: AssoDashboard
+      },
+      {
+        path: 'admin-dashboard', 
+        name: 'adminDashboard',
+        component: AdminDashboard
+      },
+      
+      {
+        path: 'class-teached', 
+        name: 'classTeached',
+        component: ClassTeached
       },
       {
         path: 'class/:classId', // dynamic segment for class id

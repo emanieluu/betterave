@@ -44,7 +44,8 @@ export default {
     return {
       email: '',
       password: '',
-      showSnackbar: false
+      showSnackbar: false,
+
     }
   },
   methods: {
@@ -57,19 +58,21 @@ export default {
         { 
           withCredentials: true
         });
+        console.log("Server Response:",response.data);
         if (response.data.status === "success") {
           const redirectDictionary = {
-            "student":"studentDashboard",
+            "student":"homepage",
             "student_asso":"studentassoDashboard",
             "teacher":"teacherDashboard",
             "admin":"adminDashboard"
           };
 
           const userType = response.data.userType;
+          console.log("User Type:", userType);
 
           if (userType in redirectDictionary) {
-            const routeName = redirectDictionary[userType]
-            this.$router.push({ name:routeName });
+            
+            this.$router.push({ name: redirectDictionary[userType] });
 
             // Redirect user to home page
             // this.$router.push({ name: 'homepage' });
@@ -131,4 +134,4 @@ export default {
 .login-col {
   margin-bottom: 100px;
 }
-</style>
+</style> 

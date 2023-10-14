@@ -5,8 +5,23 @@
     <span>{{ userEmail }}</span>
     </div>
     <div v-if="showDropdown" class="dropdown-content">
-      <router-link to="/" class="dropdown-link">Home</router-link>
+      
+      <!-- Lien générique pour tous les utilisateurs -->
+      <!-- <router-link to="/" class="dropdown-link">Home</router-link> -->
+
+      <!-- Lien spécifique au type d'utilisateur -->
+      <!-- <router-link v-if="userType === 'admin'" to="/admin-dashboard" class="dropdown-link">Admin Dashboard</router-link> -->
+      <!-- <router-link v-if="userType === 'student'" to="/student-dashboard" class="dropdown-link">Student Dashboard</router-link> -->
+      <router-link v-if="userType === 'teacher'" to="/teacher-dashboard" class="dropdown-link">Home</router-link>
+      <router-link v-else-if="userType === 'student'" to="/student-dashboard" class="dropdown-link">Home</router-link>
+      <router-link v-else-if="userType === 'student_asso'" to="/asso-dashboard" class="dropdown-link">Home</router-link>
+      <router-link v-else-if="userType === 'admin'" to="/admin-dashboard" class="dropdown-link">Home</router-link>
+      <router-link v-else to="/" class="dropdown-link">Home</router-link>
+
       <router-link to="/photochart" class="dropdown-link">Trombinoscope</router-link>
+
+      <!-- Menu cours spécifique aux professeurs -->
+      <router-link v-if="userType === 'teacher'" to="/class-teached" class="dropdown-link">Class Teached</router-link>
       <button @click="logout">Logout</button>
     </div>
 </div>
@@ -24,7 +39,12 @@
       userProfilePic: {
         type: String,
         required: true
-      }
+      },
+      userType : 
+      {
+        type: String,
+        required: true
+      },
     },
     data() {
       return {
@@ -80,7 +100,7 @@
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   border-radius: 8px; /* added border-radius for a modern touch */
-  width: 80%;
+  width: 90%;
 }
 
 .dropdown-content button {
