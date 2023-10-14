@@ -104,11 +104,7 @@ last_names = [
     "Ghosh", "Hills", "Irwin", "Jones", "Klein", "Lopez", 
     "Mason", "Nalty", "Ochoa", "Patel", "Quinn", "Reily", 
     "Smith", "Trott", "Usman", "Valdo", "White", "Xiang", 
-<<<<<<< HEAD
-    "Yakub", "Zafar", "Kientz","Chancel"
-=======
-    "Yakub", "Zafar", "Kientz", "Dechaux", "Voisin"
->>>>>>> origin/main
+    "Yakub", "Zafar", "Kientz", "Dechaux", "Voisin","Chancel"
 ]
 
 first_names = [
@@ -116,8 +112,7 @@ first_names = [
     "Grace", "Hal", "Isaac", "Julia", "Karl", "Lara", 
     "Max", "Nora", "Oscar", "Paul", "Quinn", "Rob", 
     "Susan", "Tom", "Ursula", "Victor", "Wendy", "Xavier", 
-<<<<<<< HEAD
-    "Yara", "Zack", "Thomas","Antoine"
+    "Yara", "Zack", "Thomas","Claire", "Clothilde","Antoine"
 ]
 
 role = [
@@ -125,10 +120,8 @@ role = [
     "student_asso", "admin", "admin", "admin", "teacher", "teacher", 
     "teacher", "student", "student", "student", "student_asso", "student_asso", 
     "teacher", "admin", "student", "student", "admin", "admin", 
-    "admin", "student", "student","teacher"
-=======
-    "Yara", "Zack", "Thomas", "Claire", "Clothilde"
->>>>>>> origin/main
+    "admin", "student", "student","student","student","teacher"
+
 ]
 
 
@@ -148,7 +141,7 @@ def initialize_database():
                 add_user(
                     name=first_names[i],
                     surname=last_names[i],
-                    profile_pic=f"photos/{first_names[i]}{last_names[i]}.jpg",
+                    profile_pic=f"photos/{first_names[i].lower()}_{last_names[i].lower()}.jpg",
                     level=str(random.randint(1, 3))+"A",
                     user_type=role[i],
                     enrolled_classes_ids=random.sample(class_ids, random.randint(3, len(class_ids))),
@@ -165,7 +158,7 @@ def initialize_database():
                 add_user(
                     name=first_names[i],
                     surname=last_names[i],
-                    profile_pic=f"photos/{first_names[i]}{last_names[i]}.jpg",
+                    profile_pic=f"photos/{first_names[i].lower()}_{last_names[i].lower()}.jpg",
                     level=dict_user_types[role[i]],
                     user_type=role[i],
                     enrolled_classes_ids=[],

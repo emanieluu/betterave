@@ -5,17 +5,12 @@ from app.database.operations import check_password
 from app.models.user import User
 
 
-<<<<<<< HEAD
 @bp.route('/login', methods=['POST'])
 
-=======
-@bp.route("/login", methods=["POST"])
->>>>>>> origin/main
 def login_user_route():
     if current_user.is_authenticated:
-        return jsonify(message="User already logged in", status="success"), 200
+        return jsonify(message="User already logged in", status="success",userType=current_user.user_type), 200
     data = request.get_json()
-<<<<<<< HEAD
     email = data['email']
     password = data['password']
     user = User.query.filter_by(email=email).first()
@@ -37,14 +32,6 @@ def login_user_route():
         if user_type in dict_user_types:
             return jsonify(message=f"{dict_user_types[user_type]} login successful", status="success",userType=user_type), 200
         
-=======
-    email = data["email"]
-    password = data["password"]
-    student = Student.query.filter_by(email=email).first()
-    if student and check_password(student.hashed_password, password):
-        login_user(student)
-        return jsonify(message="Login successful", status="success"), 200
->>>>>>> origin/main
     else:
         return jsonify(message="Login unsuccessful. Please check email and password", status="error"), 401
     

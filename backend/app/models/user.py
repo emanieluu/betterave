@@ -19,8 +19,6 @@ class User(db.Model, UserMixin):
     level = db.Column(db.String(30))
     user_type = db.Column(db.String(30))  # "student","student_asso","teacher","admin"
 
-    # if user_type == "student":
-    #     # Many-to-Many relationship with Class
     classes = db.relationship('Class', secondary=user_classes, back_populates='participants')
     
     def get_id(self):

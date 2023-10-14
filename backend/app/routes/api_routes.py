@@ -3,13 +3,9 @@ from datetime import datetime
 from . import bp
 from flask import jsonify, request
 from flask_login import login_required, current_user
-<<<<<<< HEAD
-from app.database.operations import get_lessons_by_user
-=======
-from app.database.operations import get_lessons_by_student, get_all_students, is_student_in_class, get_class_messages, add_class_message
+from app.database.operations import get_lessons_by_user, get_all_users, is_student_in_class, get_class_messages, add_class_message
 from app.models.class_ import Class
 from app.models.message import Message
->>>>>>> origin/main
 
 @bp.route("/profile", methods=["GET"])
 @login_required
@@ -43,10 +39,10 @@ def get_lessons_route():
 @bp.route('/photochart', methods=['GET'])
 @login_required
 def all_students_route():
-    students = get_all_students()
+    students = get_all_users()
     formatted_students = [
         {
-            'id' : student.student_id,
+            'id' : student.user_id,
             'name': student.name,
             "surname": student.surname,
             'level' : student.level,
@@ -59,7 +55,7 @@ def all_students_route():
 @bp.route("/class/<int:class_id>", methods=["GET"])
 @login_required
 def get_class_detail(class_id):
-    print("current user", current_user.student_id)
+    print("current user", current_user.user_id)
     class_instance = Class.query.get(class_id)
     if class_instance:
         # serialize and send data
@@ -69,7 +65,7 @@ def get_class_detail(class_id):
             "ensae_link": class_instance.ensae_link,
             "tutor": class_instance.tutor,
             "backgroundColor": class_instance.backgroundColor,
-            "studentId": current_user.student_id,
+            "studentId": current_user.user_id,
             "studentAuthorised": is_student_in_class(current_user, class_id)
         }), 200
     else:
@@ -93,6 +89,6 @@ def post_message(class_id):
         return jsonify(message="Unauthorized. User not part of the class.", status="error"), 403
     
     data = request.get_json()
-    msg = add_class_message(data['content'], class_id, current_user.student_id)
+    msg = add_class_message(data['content'], class_id, current_user.user_id)
     return jsonify(msg.as_dict()), 201
 

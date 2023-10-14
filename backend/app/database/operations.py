@@ -185,25 +185,25 @@ def get_lessons_by_user(user_id: int):
 def get_student_profile_pic(student_id: int)->str:
     """Get the profil picture of a particular student."""
     # Fetch the student from the database
-    student = get_student_by_id(student_id)
+    student = get_user_by_id(student_id)
     return student.profile_pic
 
 def is_student_in_class(student, class_id):
     """Check if a student is in a specific class."""
     class_instance = Class.query.get(class_id)
     print("class_instance", class_instance)
-    print("class_instance.students", class_instance.students)
+    print("class_instance.participants", class_instance.participants)
     if not class_instance:
         return False
-    return student in class_instance.students
+    return student in class_instance.participants
 
 def get_class_messages(class_id):
     """Retrieve messages for a specific class."""
     return Message.query.filter_by(class_id=class_id).order_by(Message.timestamp).all()
 
-def add_class_message(content, class_id, student_id):
+def add_class_message(content, class_id, user_id):
     """Add a message to a specific class."""
-    msg = Message(content=content, class_id=class_id, student_id=student_id)
+    msg = Message(content=content, class_id=class_id, user_id=user_id)
     db.session.add(msg)
     db.session.commit()
     return msg
