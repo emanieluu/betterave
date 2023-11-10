@@ -4,6 +4,7 @@ services:
 
   backend:
     build: ./backend
+    command: poetry run gunicorn -b 0.0.0.0:5000 --access-logfile - --error-logfile - main:app
     networks:
       mynet:
         ipv4_address: 172.16.0.2

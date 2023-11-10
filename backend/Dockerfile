@@ -1,4 +1,3 @@
-# frontend Dockerfile
 # Use an official Python runtime as a parent image
 FROM python:3.10-slim
 
@@ -20,5 +19,3 @@ RUN poetry install --no-dev
 
 # Expose port 5000 to be accessible from the outside
 EXPOSE 5000
-
-CMD poetry run python main.py
