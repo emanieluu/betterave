@@ -1,3 +1,4 @@
+# type: ignore
 import pytest
 from app.models import UserType, UserLevel
 from datetime import date, time
