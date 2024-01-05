@@ -1,6 +1,8 @@
+# type: ignore
 import pytest
+from app.models.user import User
 from app.models import UserType, UserLevel
-from datetime import date, time
+from datetime import date, time, datetime
 from app.operations.class_operations import add_class
 from app.operations.class_group_operations import add_class_group, delete_class_group
 from app.operations.lesson_operations import (
@@ -8,6 +10,13 @@ from app.operations.lesson_operations import (
     update_lesson,
     delete_lesson,
     get_lesson_by_id,
+    get_all_lessons,
+    get_all_future_lessons,
+    get_lessons_by_class,
+    get_student_lessons,
+    get_student_future_lessons,
+    get_teacher_lessons,
+    get_teacher_future_lessons,
 )
 from app.operations.user_operations import add_user
 
@@ -22,7 +31,7 @@ IS_MAIN_GROUP = True
 LESSON_DATE = date(2023, 10, 21)
 START_TIME = time(9, 0, 0)
 END_TIME = time(10, 0, 0)
-STUDENT_NAME = ("Alice", "Smith")
+STUDENT_NAME = ("Lucas", "Dough")
 HOMEWORK = "Solve problem set 4"
 ROOM = "A1"
 
@@ -30,7 +39,14 @@ ROOM = "A1"
 @pytest.fixture
 def setup_teacher(test_client):
     """Create a user and returns their ID."""
-    student_id = add_user("John", "Doe", "teacher_pic_url", UserType.TEACHER, UserLevel.NA)
+    student_id = add_user("John", "Adams", "teacher_pic_url", UserType.TEACHER, UserLevel.NA)
+    return student_id
+
+
+@pytest.fixture
+def setup_student(test_client):
+    """Create a user and returns their ID."""
+    student_id = add_user(STUDENT_NAME[0], STUDENT_NAME[1], "student_pic_url", UserType.STUDENT, UserLevel._1A)
     return student_id
 
 
@@ -101,3 +117,57 @@ def test_delete_lesson(test_client, setup_lesson):
     success = delete_lesson(setup_lesson)
     assert success is True
     assert get_lesson_by_id(setup_lesson) is None
+
+
+def test_get_lesson_by_id(test_client, setup_lesson):
+    """Test getting a lesson by its ID."""
+    lesson = get_lesson_by_id(setup_lesson)
+    assert lesson is not None
+    assert lesson.lesson_id == setup_lesson
+
+
+def test_get_all_lessons(test_client, setup_lesson):
+    """Test getting all lessons."""
+    lessons = get_all_lessons()
+    assert lessons is not None
+    assert len(lessons) >= 1
+
+
+def test_get_all_future_lessons(test_client, setup_lesson):
+    """Test getting all future lessons."""
+    future_lessons = get_all_future_lessons()
+    assert future_lessons is not None
+    assert all(lesson.date >= datetime.now().date() for lesson in future_lessons)
+
+
+def test_get_lessons_by_class(test_client, setup_lesson, setup_class):
+    """Test getting lessons for a particular class."""
+    class_lessons = get_lessons_by_class(setup_class)
+    assert class_lessons is not None
+
+
+def test_get_student_lessons(test_client, setup_lesson, setup_student):
+    """Test getting lessons for a student."""
+    student_lessons = get_student_lessons(User.query.get(setup_student))
+    assert student_lessons is not None
+
+
+def test_get_student_future_lessons(test_client, setup_lesson, setup_student):
+    """Test getting future lessons for a student."""
+    student_future_lessons = get_student_future_lessons(User.query.get(setup_student))
+    assert student_future_lessons is not None
+    assert all(lesson.date >= datetime.now().date() for lesson in student_future_lessons)
+
+
+def test_get_teacher_lessons(test_client, setup_lesson, setup_teacher):
+    """Test getting lessons for a teacher."""
+    teacher_lessons = get_teacher_lessons(User.query.get(setup_teacher))
+    assert teacher_lessons is not None
+    assert len(teacher_lessons) >= 1
+
+
+def test_get_teacher_future_lessons(test_client, setup_lesson, setup_teacher):
+    """Test getting future lessons for a teacher."""
+    teacher_future_lessons = get_teacher_future_lessons(User.query.get(setup_teacher))
+    assert teacher_future_lessons is not None
+    assert all(lesson.date >= datetime.now().date() for lesson in teacher_future_lessons)

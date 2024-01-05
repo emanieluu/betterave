@@ -2,6 +2,7 @@
 
 import os
 
+from typing import Optional
 from flask import Flask
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -20,22 +21,23 @@ from app.api import (
 
 
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(user_id: int):  # type: ignore
     """Load the user from the database."""
     from app.models.user import User
 
     return User.query.get(int(user_id))
 
 
-def create_app():
-    """Create the applicaiton instance."""
+def create_app(db_test_path: Optional[str] = None) -> Flask:
+    """Create the application instance."""
     print(f"Creating app from {os.getcwd()}", flush=True)
     print("API KEY:", os.environ.get("API_KEY"))
 
     # Initialize the Flask app
     app = Flask(__name__)
+    app.config["TESTING"] = db_test_path is not None
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or b"\x05\xe1C\x07k\x1ay<\xb6\xa4\xf8\xc6\xa8f\xb4*"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////database/betterave.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_test_path if db_test_path else "sqlite:////database/betterave.db"
     app.config.update(
         DEBUG=True,
         SESSION_COOKIE_HTTPONLY=True,
@@ -92,7 +94,7 @@ def create_app():
 
     # For testing purposes
     @app.route("/hello")
-    def index():
+    def index() -> str:
         """Route for testing purposes."""
         return "Hello, World!"
 

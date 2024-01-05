@@ -1,3 +1,5 @@
+# type: ignore
+from typing import Optional
 from datetime import datetime
 from flask import request
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,23 +9,23 @@ from app.decorators import is_valid_apikey, with_instance
 
 
 def add_event(
-    asso_id,
-    name,
-    date,
-    start_time,
-    end_time,
-    participants,
-    description=None,
-    location=None,
-):
+    asso_id: int,
+    name: str,
+    date: str,
+    start_time: str,
+    end_time: str,
+    participants: str,
+    description: str = None,
+    location: str = None,
+) -> int:
     """Add an event to the database."""
     try:
         if isinstance(date, str):
-            date = datetime.strptime(date, "%Y-%m-%d").date()
+            date_ = datetime.strptime(date, "%Y-%m-%d").date()
         if isinstance(start_time, str):
-            start_time = datetime.strptime(start_time, "%H:%M").time()
+            start_time_ = datetime.strptime(start_time, "%H:%M").time()
         if isinstance(end_time, str):
-            end_time = datetime.strptime(end_time, "%H:%M").time()
+            end_time_ = datetime.strptime(end_time, "%H:%M").time()
 
         if participants == "Subscribers":
             attending_users = User.query.get(asso_id).subscribers
@@ -36,9 +38,9 @@ def add_event(
         new_event = Event(
             asso_id=asso_id,
             name=name,
-            date=date,
-            start_time=start_time,
-            end_time=end_time,
+            date=date_,
+            start_time=start_time_,
+            end_time=end_time_,
             description=description,
             location=location,
             attending_users=attending_users,
@@ -53,7 +55,7 @@ def add_event(
         return -1
 
 
-def update_event(event_id, new_data: dict) -> bool:
+def update_event(event_id: int, new_data: dict) -> bool:
     """Modify event information in the database."""
     try:
         event = get_event_by_id(event_id)
@@ -96,7 +98,7 @@ def get_all_events() -> list[Event]:
 
 
 @with_instance(User)
-def get_association_events(asso: User, limit: int = None) -> list[Event]:
+def get_association_events(asso: User, limit: Optional[int] = None) -> list[Event]:
     """Get all events organized by a particular association."""
     events = (
         Event.query.filter_by(asso_id=asso.user_id).limit(limit).all()
@@ -107,7 +109,7 @@ def get_association_events(asso: User, limit: int = None) -> list[Event]:
 
 
 @with_instance(User)
-def get_user_events(user: User, limit: int = None) -> list[Event]:
+def get_user_events(user: User, limit: Optional[int] = None) -> list[Event]:
     """Get all events a particular user is attending."""
     if limit is not None:
         event = user.attended_events[:limit]
@@ -123,7 +125,7 @@ def get_all_future_events() -> list[Event]:
 
 
 @with_instance(User)
-def get_association_future_events(asso: User, limit: int = None) -> list[Event]:
+def get_association_future_events(asso: User, limit: Optional[int] = None) -> list[Event]:
     """Get all future events organized by a particular association."""
     if limit is not None:
         future_events = (
@@ -136,17 +138,15 @@ def get_association_future_events(asso: User, limit: int = None) -> list[Event]:
 
 
 @with_instance(User)
-def get_user_future_events(user: User, limit: int = None) -> list[Event]:
+def get_user_future_events(user: User, limit: Optional[int] = None) -> list[Event]:
     """Get all future events a particular user is attending."""
-    future_events = (
-        user.attended_events.filter(Event.date >= datetime.now().date()).limit(limit).all()
-        if limit is not None
-        else user.attended_events.filter(Event.date >= datetime.now().date()).all()
-    )
-    return future_events
+    user_events = sorted([event for event in user.attended_events if event.date >= datetime.now().date()])
+    return user_events[:limit] if limit is not None else user_events
 
 
-def add_attendees_to_event(event_id, user_ids=None, user_level=None, asso_id=None):
+def add_attendees_to_event(
+    event_id: int, user_ids: Optional[int] = None, user_level: Optional[UserLevel] = None, asso_id: Optional[int] = None
+) -> bool:
     """Add users to an event. If no users are specified, add all users."""
     event = Event.query.get(event_id)
     if not event:
@@ -176,7 +176,8 @@ def add_attendees_to_event(event_id, user_ids=None, user_level=None, asso_id=Non
     return True
 
 
-def can_create_event(user, asso_id=None):
+@with_instance(User)
+def can_create_event(user: User, asso_id: Optional[int] = None) -> bool:
     """Check if a user can create an event."""
     # Assume that admin can create events for any association or for all users
     apikey = request.headers.get("X-API-KEY")
