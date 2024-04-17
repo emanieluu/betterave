@@ -12,8 +12,14 @@ from betterave_backend.app.operations.class_operations import (
     get_classes_from_level,
     get_classes_from_teacher,
 )
-from betterave_backend.app.operations.message_operations import get_class_messages, add_class_message
-from betterave_backend.app.api.class_groups.models import message_model, message_post_model
+from betterave_backend.app.operations.message_operations import (
+    get_class_messages,
+    add_class_message,
+)
+from betterave_backend.app.api.class_groups.models import (
+    message_model,
+    message_post_model,
+)
 from betterave_backend.app.operations.homework_operations import (
     get_class_homework,
     add_homework_to_class,

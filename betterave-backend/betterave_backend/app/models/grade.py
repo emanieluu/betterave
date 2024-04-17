@@ -1,4 +1,5 @@
 """SQLAlchemy object for Grade associated with a ClassGroup."""
+
 from typing import Any
 from betterave_backend.extensions import db
 

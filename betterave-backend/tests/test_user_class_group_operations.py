@@ -6,8 +6,15 @@ from betterave_backend.app.operations.user_class_group_operations import (
     delete_user_class_group,
     get_user_class_group_by_id,
 )
-from betterave_backend.app.operations.class_group_operations import add_class_group, delete_class_group
-from betterave_backend.app.operations.user_operations import add_user, delete_user, get_user_by_id
+from betterave_backend.app.operations.class_group_operations import (
+    add_class_group,
+    delete_class_group,
+)
+from betterave_backend.app.operations.user_operations import (
+    add_user,
+    delete_user,
+    get_user_by_id,
+)
 from betterave_backend.app.operations.class_operations import add_class
 
 # Constants for the test

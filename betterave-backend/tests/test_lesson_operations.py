@@ -4,7 +4,10 @@ from betterave_backend.app.models.user import User
 from betterave_backend.app.models import UserType, UserLevel
 from datetime import date, time, datetime
 from betterave_backend.app.operations.class_operations import add_class
-from betterave_backend.app.operations.class_group_operations import add_class_group, delete_class_group
+from betterave_backend.app.operations.class_group_operations import (
+    add_class_group,
+    delete_class_group,
+)
 from betterave_backend.app.operations.lesson_operations import (
     add_lesson,
     update_lesson,
@@ -46,7 +49,13 @@ def setup_teacher(test_client):
 @pytest.fixture
 def setup_student(test_client):
     """Create a user and returns their ID."""
-    student_id = add_user(STUDENT_NAME[0], STUDENT_NAME[1], "student_pic_url", UserType.STUDENT, UserLevel._1A)
+    student_id = add_user(
+        STUDENT_NAME[0],
+        STUDENT_NAME[1],
+        "student_pic_url",
+        UserType.STUDENT,
+        UserLevel._1A,
+    )
     return student_id
 
 

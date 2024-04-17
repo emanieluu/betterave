@@ -2,12 +2,22 @@
   <v-container class="fill-height" fluid>
     <div class="content-container">
       <!-- Left Side Columns -->
-      <div class="columns-container">
-        <ColumnNextclasses :user="user" title="Next classes" />
-        <!-- Middle Container -->
-        <div class="main-column">
-          <h2>Homework</h2>
-          <Homework></Homework>
+      <div class="left-container">
+        <div class="columns-container">
+          <ColumnNextclasses :user="user" title="Next classes" />
+          <!-- Middle Container -->
+          <div class="main-column">
+            <h2>Homework</h2>
+            <Homework></Homework>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="notifications-container">
+          <h2>Notifications</h2>
+          <div class="notifications">
+            <Notification></Notification>
+          </div>
         </div>
       </div>
 
@@ -22,16 +32,16 @@
 <script>
 import { apiClient } from "@/apiConfig";
 import UserCalendar from "@/components/UserCalendar.vue";
-import InfoColumn from "@/components/InfoColumn.vue";
 import ColumnNextclasses from "@/components/ColumnNextclasses.vue";
 import Homework from "@/components/Homework.vue";
+import Notification from "@/components/Notification.vue";
 
 export default {
   components: {
     UserCalendar,
-    InfoColumn,
     ColumnNextclasses,
     Homework,
+    Notification,
   },
   data() {
     return {
@@ -59,6 +69,10 @@ export default {
 </script>
 
 <style>
+.fill-height {
+  min-height: 100vh;
+}
+
 .calendar-box {
   background-color: #f5f5f5;
   border-radius: 10px;
@@ -77,12 +91,19 @@ export default {
   width: 100%;
 }
 
+.left-container {
+  width: calc(50% - 20px);
+  display: flex;
+  flex-direction: column;
+}
+
 .columns-container {
   display: flex;
   justify-content: space-between;
-  width: calc(50% - 20px);
-  height: 80vh;
+  width: calc(100% - 20px);
+  height: 50vh; /* Ajuster la hauteur à 50% */
 }
+
 .main-column {
   flex: 1.5;
   padding: 20px;
@@ -95,10 +116,46 @@ export default {
   position: relative;
   z-index: 1;
 }
+
 h2 {
   font-size: 1.5rem;
   margin-bottom: 20px;
   border-bottom: 1px solid var(--separator-color);
   padding-bottom: 10px;
+}
+
+.notifications-container {
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.content-box {
+  padding: 20px;
+  background-color: var(--secondary-color-transparent);
+  color: var(--primary-text-color);
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 0 10px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.notifications {
+  height: 18vh;
+  padding: 20px;
+  background-color: var(--secondary-color-transparent);
+  color: var(--primary-text-color);
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 0 10px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
 }
 </style>

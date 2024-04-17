@@ -42,6 +42,12 @@ from betterave_backend.app.operations.event_operations import (
     get_all_future_events,
     get_user_future_events,
 )
+
+from betterave_backend.app.operations.notification_operations import (
+    get_all_notifications,
+    get_user_notifications,
+)
+
 from betterave_backend.app.operations.user_class_group_operations import (
     enroll_user_in_class,
     unenroll_user_from_class,
@@ -49,6 +55,7 @@ from betterave_backend.app.operations.user_class_group_operations import (
 )
 from betterave_backend.app.api.lessons.models import fullcalendar_lesson_model
 from betterave_backend.app.api.events.models import fullcalendar_event_model
+from betterave_backend.app.api.notifications.models import fullcalendar_notif_model
 from betterave_backend.app.decorators import (
     require_authentication,
     current_user_required,
@@ -195,9 +202,9 @@ class UserClassGroupsResource(Resource):
                     "class_ects": class_group.class_.ects_credits,
                     "primary_class_group_id": class_group.primary_class_group_id,
                     "secondary_class_group_id": class_group.secondary_class_group_id,
-                    "secondary_class_group_name": class_group.secondary_class_group.name
-                    if class_group.secondary_class_group
-                    else "",
+                    "secondary_class_group_name": (
+                        class_group.secondary_class_group.name if class_group.secondary_class_group else ""
+                    ),
                     "all_groups": [group.name for group in class_group.class_.groups if not group.is_main_group],
                 }
                 for class_group in user.class_groups
@@ -335,9 +342,9 @@ class EnrollClass(Resource):
                 "class_ects": class_group.class_.ects_credits,
                 "primary_class_group_id": class_group.primary_class_group_id,
                 "secondary_class_group_id": class_group.secondary_class_group_id,
-                "secondary_class_group_name": class_group.secondary_class_group.name
-                if class_group.secondary_class_group
-                else "",
+                "secondary_class_group_name": (
+                    class_group.secondary_class_group.name if class_group.secondary_class_group else ""
+                ),
                 "all_groups": [group.name for group in class_group.class_.groups if not group.is_main_group],
             }
         elif message == "Already enrolled in class":
@@ -405,3 +412,20 @@ class UserFutureEvents(Resource):
             future_events = get_user_future_events(user, limit)
 
         return future_events
+
+
+@api.route("/<string:user_id_or_me>/notifications")
+class UserNotifications(Resource):
+    @api.doc(security="apikey")
+    @require_authentication()
+    @resolve_user
+    @current_user_required
+    @api.marshal_list_with(fullcalendar_notif_model)
+    def get(self, user):
+        """Get a list of notifications for a specific user."""
+        if user.is_admin:
+            notifications = get_all_notifications()
+        else:
+            notifications = get_user_notifications(user)
+
+        return notifications

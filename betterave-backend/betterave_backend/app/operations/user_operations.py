@@ -3,6 +3,7 @@ This module contains functions for performing operations on users in the databas
 
 It excludes operations related specifically to students, which are defined in student_operations.py.
 """
+
 from typing import Optional, Any
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_
@@ -10,6 +11,9 @@ from betterave_backend.extensions import db, bcrypt
 from betterave_backend.app.decorators import with_instance
 from betterave_backend.app.models import UserLevel, UserType, User
 from betterave_backend.app.operations.event_operations import get_all_events
+from betterave_backend.app.operations.notification_operations import (
+    get_all_notifications,
+)
 
 
 def create_register_hash(name: str, surname: str, key: str = "ENSAE2024"):
@@ -115,6 +119,9 @@ def add_user(
         # Update the user's attendance to events
         update_event_attendance(new_user)
 
+        # Update the user's reception of notifications
+        update_notifications(new_user)
+
         return new_user.user_id
     except SQLAlchemyError as e:
         db.session.rollback()
@@ -149,6 +156,37 @@ def update_event_attendance(user: User) -> None:
 
         elif event.participant_type == user.level.value:
             user.attended_events.append(event)
+
+    db.session.commit()
+
+
+@with_instance(User)
+def update_notifications(user: User) -> None:
+    """Update the reception of a user to the notifications of the database."""
+    # Loop through all notifications
+    for notif in get_all_notifications():
+        # If user already has an attendance for this event
+        if notif in user.attended_events:
+            if notif.recipient_type == "Subscribers" and notif.association not in user.subscriptions:
+                user.received_notifications.remove(notif)
+
+            elif notif.recipient_type == "All users":
+                continue
+
+            elif isinstance(notif.recipient_type, UserLevel):
+                user.received_notifications.remove(notif)
+            continue
+
+        # If not, should the user be added to the event?
+        if notif.recipient_type == "Subscribers":
+            if notif.association in user.subscriptions:
+                user.received_notifications.append(notif)
+
+        elif notif.recipient_type == "All users":
+            user.received_notifications.append(notif)
+
+        elif isinstance(notif.recipient_type, UserLevel):
+            user.received_notifications.append(notif)
 
     db.session.commit()
 

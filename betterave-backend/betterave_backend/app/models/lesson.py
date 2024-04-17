@@ -3,6 +3,7 @@ Flask SQLAlchemy model for a specific lesson within a class.
 
 A lesson is a specific instance of a class, with a date, a start time, end time, room, teacher, etc.
 """
+
 from betterave_backend.extensions import db
 
 

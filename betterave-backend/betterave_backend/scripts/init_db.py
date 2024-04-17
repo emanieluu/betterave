@@ -8,7 +8,11 @@ from betterave_backend.main import app
 from betterave_backend.extensions import db
 from betterave_backend.app.operations.user_operations import add_user, get_user_by_name
 from betterave_backend.app.operations.student_operations import get_students_from_level
-from betterave_backend.app.operations.class_operations import add_class, get_classes_from_level, get_class_by_id
+from betterave_backend.app.operations.class_operations import (
+    add_class,
+    get_classes_from_level,
+    get_class_by_id,
+)
 from betterave_backend.app.operations.lesson_operations import add_lesson
 from betterave_backend.app.operations.class_group_operations import (
     add_class_group,
@@ -16,8 +20,11 @@ from betterave_backend.app.operations.class_group_operations import (
     get_class_group_by_name,
 )
 from betterave_backend.app.operations.event_operations import add_event
+from betterave_backend.app.operations.notification_operations import add_notification
 from betterave_backend.app.operations.grade_operations import add_grade
-from betterave_backend.app.operations.user_class_group_operations import add_user_class_group
+from betterave_backend.app.operations.user_class_group_operations import (
+    add_user_class_group,
+)
 from betterave_backend.app.operations.asso_operations import subscribe_to_asso
 from betterave_backend.app.operations.message_operations import add_class_message
 from betterave_backend.app.operations.homework_operations import add_homework_to_class
@@ -234,7 +241,7 @@ def initialize_database() -> None:
                         user_id=student.user_id,
                         class_id=class_.class_id,
                         primary_class_group_id=primary_group.group_id,
-                        secondary_class_group_id=secondary_group.group_id if secondary_group else None,
+                        secondary_class_group_id=(secondary_group.group_id if secondary_group else None),
                     )
 
         # 9 - Add lessons
@@ -278,6 +285,7 @@ def initialize_database() -> None:
         # EJE meeting every tuesday at 17h
         asso_id = asso_ids[1]
         date_range = pd.date_range(start="2023-09-01", end="2024-04-30", freq="W-TUE")
+
         for date in date_range:
             add_event(
                 asso_id,
@@ -287,6 +295,58 @@ def initialize_database() -> None:
                 "18:00",
                 "Subscribers",
             )
+
+        # 11bis - Add notifications
+        print("Adding notifications ...")
+        # asso_id = asso_ids[1]
+        sent_by_user_id = admin_ids[0]
+        # Constants
+        add_notification(
+            title="Fermeture bibliothèque - 23/05",
+            content="La bibliothèque sera exeptionnellement fermée de 12h30 à 15h le jeudi 23 Mai",
+            sent_by_user_id=sent_by_user_id,
+            recipient_type="All users",
+        )
+
+        add_notification(
+            title="Fermeture bibliothèque - 10/05",
+            content="La bibliothèque sera exeptionnellement fermée toute la journée du 10 Mai",
+            sent_by_user_id=sent_by_user_id,
+            recipient_type="All users",
+        )
+
+        add_notification(
+            title="Travaux bruillants",
+            content=(
+                "Des travaux de plomberie impliquant des percements vont être réalisés "
+                "au sein du bâtiment les 21 et 22 Mai."
+            ),
+            sent_by_user_id=sent_by_user_id,
+            recipient_type="All users",
+        )
+
+        add_notification(
+            title="Services Informatiques",
+            content=(
+                "Pour information, certains services informatiques"
+                "subissent des lenteurs depuis la coupure du mardi 23/05."
+                "En effet, la source de l’incident n’étant toujours pas corrigé, nous utilisons"
+                "une connexion de secours moins performante qu’habituellement."
+            ),
+            sent_by_user_id=sent_by_user_id,
+            recipient_type="All users",
+        )
+
+        add_notification(
+            title="Partiels 1A et 2A",
+            content=(
+                "Chers 3A, nous vous informons que les étudiants de 1ère et 2ème années"
+                "seront en examens la semaine du 3 Juin et nous vous demandons"
+                "donc de ne pas être trop bruyants dans les couloirs pendant cette période."
+            ),
+            sent_by_user_id=sent_by_user_id,
+            recipient_type="All users",
+        )
 
         # 12 - Add grades
         print("Adding grades...")

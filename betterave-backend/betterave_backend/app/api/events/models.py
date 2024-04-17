@@ -38,7 +38,7 @@ fullcalendar_event_model = api.model(
             description="The end time of the event in ISO8601 format",
         ),
         "title": fields.String(
-            attribute=lambda x: f"{x.association.name} - {x.name}" if x.association else "Unnamed Event",
+            attribute=lambda x: (f"{x.association.name} - {x.name}" if x.association else "Unnamed Event"),
             description="The name of the association or the main title of the event",
         ),
         "type": fields.String(

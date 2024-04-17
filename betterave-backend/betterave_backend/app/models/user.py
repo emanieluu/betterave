@@ -36,6 +36,11 @@ class User(db.Model, UserMixin):
     messages = db.relationship("Message", back_populates="user")
     lessons_taught = db.relationship("Lesson", back_populates="teacher", lazy="dynamic")
     attended_events = db.relationship("Event", secondary="event_attendance", back_populates="attending_users")
+    received_notifications = db.relationship(
+        "Notification",
+        secondary="notification_reception",
+        back_populates="recipient_users",
+    )
     subscriptions = db.relationship(
         "User",
         secondary=association_subscriptions,

@@ -43,7 +43,13 @@ def setup_class(test_client, setup_teacher):
 @pytest.fixture
 def setup_student(test_client):
     """Create a user and returns their ID."""
-    student_id = add_user(STUDENT_NAME[0], STUDENT_NAME[1], "student_pic_url", UserType.STUDENT, UserLevel._1A)
+    student_id = add_user(
+        STUDENT_NAME[0],
+        STUDENT_NAME[1],
+        "student_pic_url",
+        UserType.STUDENT,
+        UserLevel._1A,
+    )
     return student_id
 
 

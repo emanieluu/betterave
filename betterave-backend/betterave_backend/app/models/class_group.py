@@ -3,6 +3,7 @@ SQLAlchemy model for a class group.
 
 See the docstring of the Class model for more information.
 """
+
 from betterave_backend.extensions import db
 
 

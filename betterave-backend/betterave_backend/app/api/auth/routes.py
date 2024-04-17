@@ -3,7 +3,10 @@ from flask_restx import Resource
 from flask_login import login_user, current_user, logout_user
 from .namespace import api
 from .models import login_model, login_status_model
-from betterave_backend.app.operations.user_operations import check_password, get_user_by_email
+from betterave_backend.app.operations.user_operations import (
+    check_password,
+    get_user_by_email,
+)
 
 
 @api.route("/login")

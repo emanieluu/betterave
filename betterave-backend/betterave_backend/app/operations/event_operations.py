@@ -145,7 +145,10 @@ def get_user_future_events(user: User, limit: Optional[int] = None) -> list[Even
 
 
 def add_attendees_to_event(
-    event_id: int, user_ids: Optional[int] = None, user_level: Optional[UserLevel] = None, asso_id: Optional[int] = None
+    event_id: int,
+    user_ids: Optional[int] = None,
+    user_level: Optional[UserLevel] = None,
+    asso_id: Optional[int] = None,
 ) -> bool:
     """Add users to an event. If no users are specified, add all users."""
     event = Event.query.get(event_id)

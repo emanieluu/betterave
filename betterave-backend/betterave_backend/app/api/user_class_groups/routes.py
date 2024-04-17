@@ -9,7 +9,9 @@ from betterave_backend.app.operations.user_class_group_operations import (
     delete_user_class_group,
     get_ucg_by_user_and_class,
 )
-from betterave_backend.app.operations.class_group_operations import get_class_group_by_name
+from betterave_backend.app.operations.class_group_operations import (
+    get_class_group_by_name,
+)
 from betterave_backend.app.decorators import require_authentication
 
 
