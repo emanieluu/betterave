@@ -20,6 +20,7 @@ class User(db.Model, UserMixin):
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     hashed_password = db.Column(db.String(120), nullable=False)
+    reset_token = db.Column(db.String(100), unique=True)
     name = db.Column(db.String(80), nullable=False)
     surname = db.Column(db.String(120), nullable=False)
     profile_pic = db.Column(db.String(120), nullable=True)

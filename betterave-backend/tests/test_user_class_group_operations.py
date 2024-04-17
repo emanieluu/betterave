@@ -83,7 +83,12 @@ def setup_user(test_client):
 
 
 @pytest.fixture
-def setup_user_class_group(test_client, setup_user, setup_primary_class_group, setup_secondary_class_group):
+def setup_user_class_group(
+    test_client,
+    setup_user,
+    setup_primary_class_group,
+    setup_secondary_class_group,
+):
     """Create a UserClassGroup and returns its ID."""
     user_class_group_id = add_user_class_group(
         user_id=setup_user,

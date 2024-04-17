@@ -4,12 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_restx import Api
+from flask_mail import Mail
 
 authorizations = {"apikey": {"type": "apiKey", "in": "header", "name": "X-API-KEY"}}
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
+mail = Mail()
 api = Api(
     version="3.2",
     title="Betterave API",

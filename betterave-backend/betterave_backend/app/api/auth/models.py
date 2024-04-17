@@ -16,3 +16,8 @@ login_status_model = api.model(
         "role": fields.String(description="Type of user if authenticated"),
     },
 )
+
+reset_password_model = api.model(
+    "ResetPassword",
+    {"email": fields.String(required=True, description="Email address for password reset")},
+)

@@ -6,8 +6,7 @@ from typing import Optional
 from flask import Flask
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
-
-from betterave_backend.extensions import db, bcrypt, login_manager, api
+from betterave_backend.extensions import db, bcrypt, login_manager, api, mail
 
 from betterave_backend.app.api import (
     auth_ns,
@@ -72,6 +71,15 @@ def create_app(db_test_path: Optional[str] = None) -> Flask:
             }
         },
     )
+
+    # Initialize Flask-Mail
+    app.config["MAIL_SERVER"] = "smtp.gmail.com"
+    app.config["MAIL_PORT"] = 587
+    app.config["MAIL_USE_TLS"] = True
+    app.config["MAIL_USERNAME"] = "sbetterave.mdp@gmail.com"
+    app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+    print(f"MAIL_PASSWORD: {os.environ.get('MAIL_PASSWORD')}")
+    mail.init_app(app)  # Bind Flask-Mail to the Flask application
 
     # Initialize the extensions
     db.init_app(app)

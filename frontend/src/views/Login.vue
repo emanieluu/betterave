@@ -30,8 +30,13 @@
             <v-btn rounded block class="centered-button" @click="login">
               Login
             </v-btn>
-            <!-- Registration Link -->
           </v-card-actions>
+          <!-- Forgot Password and Sign Up Links -->
+          <v-card-text class="text-center">
+            <a class="text-blue text-decoration-none" @click="forgotPassword">
+              Forgot password?
+            </a>
+          </v-card-text>
           <v-card-text class="text-center">
             <a
               class="text-blue text-decoration-none"
@@ -44,11 +49,14 @@
       </v-col>
     </v-row>
     <RegisterDialog ref="registerDialog"></RegisterDialog>
+    <PasswordDialog ref="passwordDialog"></PasswordDialog>
   </v-container>
 </template>
+
 <script>
 import { apiClient, toast } from "@/apiConfig";
 import RegisterDialog from "@/components/RegisterDialog.vue";
+import PasswordDialog from "@/components/PasswordDialog.vue";
 
 export default {
   data() {
@@ -59,9 +67,7 @@ export default {
   },
   components: {
     RegisterDialog,
-  },
-  mounted() {
-    this.logout();
+    PasswordDialog,
   },
   methods: {
     openRegisterDialog() {
@@ -80,6 +86,13 @@ export default {
         .then((response) => {
           this.$router.push({ name: "homepage" });
         });
+    },
+    forgotPassword() {
+      if (this.$refs.passwordDialog) {
+        this.$refs.passwordDialog.open();
+      } else {
+        console.error("PasswordDialog component not found");
+      }
     },
     logout() {
       apiClient
@@ -108,12 +121,14 @@ export default {
   height: 250px;
   width: auto;
 }
+
 .centered-button {
   background-color: #80808084;
   text-align: center;
   margin: 0 auto;
   display: block;
 }
+
 .betterave-logo {
   width: 70%;
   height: auto;
@@ -122,9 +137,11 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
+
 .v-card-text {
   padding-bottom: 0px;
 }
+
 .login-button {
   padding: 0.5rem 2rem;
 }
@@ -138,6 +155,7 @@ export default {
 .centered-button:hover {
   background-position: -100% 0;
 }
+
 .text-center {
   padding: 5px;
   cursor: pointer;

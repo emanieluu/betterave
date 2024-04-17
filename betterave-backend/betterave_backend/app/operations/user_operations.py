@@ -281,3 +281,21 @@ def get_user_by_name(name: str, surname: str) -> User:
     if user:
         return user
     raise ValueError(f"User {name} {surname} not found")
+
+
+def set_new_token(user: User, reset_token: str) -> User:
+    """Set a new token for a given user."""
+    user.reset_token = reset_token
+    db.session.commit()
+
+
+def update_user_password(email: str, new_password: str):
+    """Update user's password."""
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        # Update user's password
+        user.hashed_password = hash_password(new_password)
+        db.session.commit()  # Commit the changes to the database
+    else:
+        raise ValueError("User with provided email not found")
