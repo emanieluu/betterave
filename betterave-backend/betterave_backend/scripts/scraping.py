@@ -22,6 +22,8 @@ PATH_JAN = "data/edt_january.html"
 PATH_FEB = "data/edt_february.html"
 PATH_MAR = "data/edt_march.html"
 PATH_APR = "data/edt_april.html"
+PATH_MAY = "data/edt_may.html"
+PATH_JUN = "data/edt_june.html"
 
 
 # Classes names that need to be mapped
@@ -402,6 +404,8 @@ if __name__ == "__main__":
     event_data_feb = scrap_events_data(PATH_FEB)
     event_data_mar = scrap_events_data(PATH_MAR)
     event_data_apr = scrap_events_data(PATH_APR)
+    event_data_may = scrap_events_data(PATH_MAY)
+    event_data_jun = scrap_events_data(PATH_JUN)
 
     # Concatenate html
     event_data = (
@@ -412,6 +416,8 @@ if __name__ == "__main__":
         + event_data_feb
         + event_data_mar
         + event_data_apr
+        + event_data_may
+        + event_data_jun
     )
     event_data_by_classes = combine_lessons(event_data)
 

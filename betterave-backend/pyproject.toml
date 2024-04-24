@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "betterave-backend"
-version = "5.0.0"
+version = "5.1.1"
 description = "Backend for Betterave - Pamplemousse alternative"
 authors = ["ENSAE students"]
 license = "MIT"
