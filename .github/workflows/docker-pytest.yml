@@ -1,0 +1,22 @@
+name: Pytest on Docker Backend Image
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Start Docker Compose
+        run: docker compose up --build -d
+
+      - name: Run tests
+        run: docker exec betterave-backend-1 python -m pytest
