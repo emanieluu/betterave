@@ -1,3 +1,5 @@
+"""Tests for the class group operations."""
+
 # type: ignore
 import pytest
 from betterave_backend.app.operations.class_group_operations import (
@@ -23,14 +25,14 @@ BACKGROUND_COLOR = "#123456"
 
 
 @pytest.fixture
-def setup_teacher(test_client):
+def setup_teacher(test_client) -> int:
     """Create a user and returns their ID."""
     teacher_id = add_user("John", "Doe", "teacher_pic_url", UserType.TEACHER, UserLevel.NA)
     return teacher_id
 
 
 @pytest.fixture
-def setup_class(test_client, setup_teacher):
+def setup_class(test_client, setup_teacher) -> int:
     """Fixture to create a class and return its instance."""
     class_id = add_class(
         class_id=CLASS_ID,
@@ -44,14 +46,14 @@ def setup_class(test_client, setup_teacher):
 
 
 @pytest.fixture
-def setup_group(test_client, setup_class):
+def setup_group(test_client, setup_class) -> int:
     """Fixture to create a class group within the setup class and return its ID."""
     group_id = add_class_group(name=GROUP_NAME, class_id=setup_class, is_main_group=IS_MAIN_GROUP)
     return group_id
 
 
 @pytest.fixture
-def setup_student(test_client):
+def setup_student(test_client) -> int:
     """Fixture to create a student and return their ID."""
     student_id = add_user("Jane", "Doe", "student_pic_url", UserType.STUDENT, UserLevel._1A)
     return student_id

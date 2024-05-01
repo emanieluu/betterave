@@ -32,7 +32,8 @@ class ClassGroupList(Resource):
     @api.expect(class_group_model)
     def post(self):
         """Create a new class group."""
-        return add_class_group(api.payload), 201
+        class_group_data = api.payload
+        return add_class_group(**class_group_data), 201
 
 
 @api.route("/<int:group_id>")
@@ -41,7 +42,7 @@ class ClassGroupResource(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_with(class_group_model)
-    def get(self, group_id):
+    def get(self, group_id: int):
         """Fetch a class group given its identifier."""
         group = get_class_group_by_id(group_id)
         if group:
@@ -52,7 +53,7 @@ class ClassGroupResource(Resource):
     @require_authentication("admin", "teacher")
     @api.expect(class_group_model)
     @api.response(204, "Class group successfully updated")
-    def put(self, group_id):
+    def put(self, group_id: int):
         """Update a class group given its identifier."""
         if update_class_group(group_id, api.payload):
             return None, 204
@@ -61,7 +62,7 @@ class ClassGroupResource(Resource):
     @api.doc(security="apikey")
     @require_authentication("admin", "teacher")
     @api.response(204, "Class group successfully deleted")
-    def delete(self, group_id):
+    def delete(self, group_id: int):
         """Delete a class group given its identifier."""
         if delete_class_group(group_id):
             return None, 204
@@ -73,14 +74,14 @@ class GroupMessages(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_list_with(message_model)
-    def get(self, group_id):
+    def get(self, group_id: int):
         """Get all messages for a specific class group."""
         return [message.as_dict() for message in get_messages_by_group_id(group_id)]
 
     @api.doc(security="apikey")
     @require_authentication()
     @api.expect(message_post_model)
-    def post(self, group_id):
+    def post(self, group_id: int):
         """Post a new message to a specific class group."""
         content = api.payload.get("content")
         message = add_message_to_group(content, user_id=current_user.user_id, group_id=group_id)
@@ -95,7 +96,7 @@ class MessageResource(Resource):
     @api.doc(security="apikey")
     @require_authentication("admin", "teacher")
     @api.response(204, "Message successfully deleted")
-    def delete(self, message_id):
+    def delete(self, message_id: int):
         """Delete a specific message."""
         if delete_message(message_id):
             return None, 204

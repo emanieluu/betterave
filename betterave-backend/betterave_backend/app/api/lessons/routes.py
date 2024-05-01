@@ -26,7 +26,8 @@ class LessonList(Resource):
     @api.expect(lesson_post_model)
     def post(self):
         """Create a new lesson."""
-        return add_lesson(api.payload), 201
+        lesson_data = api.payload
+        return add_lesson(**lesson_data), 201
 
 
 @api.route("/<int:lesson_id>")
@@ -35,7 +36,7 @@ class LessonResource(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_with(fullcalendar_lesson_model)
-    def get(self, lesson_id):
+    def get(self, lesson_id: int):
         """Fetch a lesson given its identifier."""
         lesson = get_lesson_by_id(lesson_id)
         if lesson:
@@ -46,7 +47,7 @@ class LessonResource(Resource):
     @require_authentication("admin", "teacher")
     @api.expect(lesson_post_model)
     @api.response(204, "Lesson successfully updated")
-    def put(self, lesson_id):
+    def put(self, lesson_id: int):
         """Update a lesson given its identifier."""
         if update_lesson(lesson_id, api.payload):
             return None, 204
@@ -55,7 +56,7 @@ class LessonResource(Resource):
     @api.doc(security="apikey")
     @require_authentication("admin", "teacher")
     @api.response(204, "Lesson successfully deleted")
-    def delete(self, lesson_id):
+    def delete(self, lesson_id: int):
         """Delete a lesson given its identifier."""
         if delete_lesson(lesson_id):
             return None, 204

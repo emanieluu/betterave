@@ -25,7 +25,7 @@ from betterave_backend.app.operations.homework_operations import (
     add_homework_to_class,
     get_user_homework,
 )
-from betterave_backend.app.models import UserLevel
+from betterave_backend.app.models import UserLevel, User
 from betterave_backend.app.decorators import require_authentication, resolve_user
 
 
@@ -43,7 +43,8 @@ class ClassList(Resource):
     @api.expect(class_model)
     def post(self):
         """Create a new class."""
-        return add_class(api.payload), 201
+        class_data = api.payload
+        return add_class(**class_data), 201
 
 
 @api.route("/<int:class_id>")
@@ -52,7 +53,7 @@ class ClassResource(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_with(class_model)
-    def get(self, class_id):
+    def get(self, class_id: int):
         """Fetch a class given its identifier."""
         cls = get_class_by_id(class_id)
         if cls is None:
@@ -63,7 +64,7 @@ class ClassResource(Resource):
     @require_authentication("admin", "teacher")
     @api.expect(class_model)
     @api.response(204, "Class updated successfully")
-    def put(self, class_id):
+    def put(self, class_id: int):
         """Update a class given its identifier."""
         update_class(class_id, api.payload)
         return None, 204
@@ -71,7 +72,7 @@ class ClassResource(Resource):
     @api.doc(security="apikey")
     @require_authentication("admin", "teacher")
     @api.response(204, "Class deleted successfully")
-    def delete(self, class_id):
+    def delete(self, class_id: int):
         """Delete a class given its identifier."""
         delete_class(class_id)
         return None, 204
@@ -83,7 +84,7 @@ class ClassLevelResource(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_list_with(class_model)
-    def get(self, level_or_me):
+    def get(self, level_or_me: UserLevel):
         """Fetch all classes for a given level."""
         try:
             if level_or_me == "me":
@@ -105,7 +106,7 @@ class ClassTeacherResource(Resource):
     @require_authentication()
     @resolve_user
     @api.marshal_list_with(class_model)
-    def get(self, user):
+    def get(self, user: User):
         """Fetch all classes for a given teacher_id."""
         if user.is_admin:
             return get_all_classes()
@@ -117,7 +118,7 @@ class ClassMessages(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_list_with(message_model)
-    def get(self, class_id):
+    def get(self, class_id: int):
         """Get all messages for the main group of a specific class."""
         class_ = get_class_by_id(class_id)
         if not class_:
@@ -127,7 +128,7 @@ class ClassMessages(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.expect(message_post_model)
-    def post(self, class_id):
+    def post(self, class_id: int):
         """Post a new message to the main group of a specific class."""
         content = api.payload.get("content")
         message = add_class_message(content, class_id=class_id, user_id=current_user.user_id)
@@ -141,14 +142,14 @@ class GroupHomework(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_list_with(homework_model)
-    def get(self, class_id):
+    def get(self, class_id: int):
         """Get all homework for a specific class group."""
         return [hmw.as_dict() for hmw in get_class_homework(class_id)]
 
     @api.doc(security="apikey")
     @require_authentication("admin", "teacher")
     @api.expect(homework_post_model)
-    def post(self, class_id):
+    def post(self, class_id: int):
         """Post a new homework to a specific class group."""
         content = api.payload.get("content")
         due_date = api.payload.get("due_date")

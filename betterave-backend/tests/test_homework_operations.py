@@ -1,5 +1,8 @@
+"""Tests for the homework operations."""
+
 # type: ignore
 import pytest
+from betterave_backend.extensions import db
 from betterave_backend.app.models.class_ import Class
 from betterave_backend.app.models.user import User
 from betterave_backend.app.models import UserType, UserLevel
@@ -86,13 +89,13 @@ def test_delete_homework(test_client, setup_group):
 
 def test_get_class_homework(test_client, setup_class, setup_group):
     """Test retrieving homework for a specific class."""
-    class_homework = get_class_homework(Class.query.get(setup_class))
+    class_homework = get_class_homework(db.session.get(Class, setup_class))
     assert class_homework is not None
     assert isinstance(class_homework, list)
 
 
 def test_get_user_homework(test_client, setup_student):
     """Test retrieving homework for a specific user."""
-    user_homework = get_user_homework(User.query.get(setup_student))
+    user_homework = get_user_homework(db.session.get(User, setup_student))
     assert user_homework is not None
     assert isinstance(user_homework, list)

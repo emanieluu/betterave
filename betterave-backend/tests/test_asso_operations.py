@@ -1,3 +1,5 @@
+"""Tests for the asso_operations module."""
+
 # type: ignore
 import pytest
 from betterave_backend.app.operations import user_operations
@@ -18,14 +20,14 @@ USER_NAME = ("Alice", "Smith")
 
 # Fixtures
 @pytest.fixture
-def setup_user(test_client):
+def setup_user(test_client) -> int:
     """Create a user and returns their ID."""
     student_id = user_operations.add_user(USER_NAME[0], USER_NAME[1], "student_pic_url", UserType.STUDENT, UserLevel.NA)
     return student_id
 
 
 @pytest.fixture
-def setup_asso(test_client):
+def setup_asso(test_client) -> int:
     """Create an Asso and returns its ID."""
     asso_id = user_operations.add_user(
         ASSO_NAME,
@@ -39,7 +41,6 @@ def setup_asso(test_client):
     return asso_id
 
 
-# Tests
 def test_subscribe_to_asso(setup_user, setup_asso):
     """Subscribe a user to an asso."""
     user_id = setup_user

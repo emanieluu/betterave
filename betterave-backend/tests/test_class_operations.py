@@ -1,3 +1,5 @@
+"""Tests for class operations."""
+
 # type: ignore
 import pytest
 from betterave_backend.app.operations import class_operations
@@ -12,14 +14,14 @@ BACKGROUND_COLOR = "#123456"
 
 
 @pytest.fixture
-def setup_teacher(test_client):
+def setup_teacher(test_client) -> int:
     """Create a user and returns their ID."""
     student_id = add_user("John", "Doe", "teacher_pic_url", UserType.TEACHER, UserLevel.NA)
     return student_id
 
 
 @pytest.fixture
-def setup_class(test_client, setup_teacher):
+def setup_class(test_client, setup_teacher) -> int:
     """Fixture to create a class and return its instance."""
     class_id = class_operations.add_class(
         class_id=0,

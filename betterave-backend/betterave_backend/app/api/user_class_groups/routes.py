@@ -22,7 +22,8 @@ class UserClassGroupList(Resource):
     @api.expect(user_class_group_model)
     def post(self):
         """Create a new user-class group relationship."""
-        return add_user_class_group(api.payload), 201
+        user_class_group_data = api.payload
+        return add_user_class_group(**user_class_group_data), 201
 
 
 @api.route("/<int:id>")
@@ -31,7 +32,7 @@ class UserClassGroupResource(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_with(user_class_group_model)
-    def get(self, id):
+    def get(self, id: int):
         """Fetch a user-class group relationship given its identifier."""
         user_class_group = get_user_class_group_by_id(id)
         if user_class_group:
@@ -41,7 +42,7 @@ class UserClassGroupResource(Resource):
     @api.doc(security="apikey")
     @require_authentication("admin")
     @api.response(204, "User-Class Group relationship successfully deleted")
-    def delete(self, id):
+    def delete(self, id: int):
         """Delete a user-class group relationship given its identifier."""
         if delete_user_class_group(id):
             return None, 204
@@ -56,7 +57,7 @@ class UserClassGroupDetail(Resource):
     @api.expect(user_class_group_update_model)
     @api.response(200, "User-Class Group relationship successfully updated")
     @api.response(204, "No changes were made to the User-Class Group relationship")
-    def put(self, user_id, class_id):
+    def put(self, user_id: int, class_id: int):
         """Update the secondary class group associated with the user-class group relationship."""
         data = api.payload
         secondary_class_group_name = data.get("secondary_class_group_name")

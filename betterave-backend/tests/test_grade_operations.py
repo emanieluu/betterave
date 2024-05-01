@@ -1,3 +1,5 @@
+"""Tests for the grade operations."""
+
 # type: ignore
 import pytest
 from betterave_backend.app.models import UserType, UserLevel

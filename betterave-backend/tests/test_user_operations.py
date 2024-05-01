@@ -1,3 +1,5 @@
+"""Tests for the user operations module."""
+
 # type: ignore
 from betterave_backend.app.models import UserLevel, UserType
 from betterave_backend.app.operations import user_operations

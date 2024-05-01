@@ -1,5 +1,6 @@
 # type: ignore
 from flask_restx import Resource, reqparse
+from betterave_backend.app.models import User
 from .models import (
     user_model,
     user_post_model,
@@ -101,12 +102,12 @@ class ClassListStudents(Resource):
     @api.doc(security="apikey")
     @require_authentication()
     @api.marshal_list_with(user_model)
-    def get(self, class_id):
+    def get(self, class_id: int):
         """List all students from a given class_id."""
         return get_students_from_class(class_id)
 
     @api.expect(user_post_model)
-    def post(self):
+    def post(self, class_id: int):
         """Create a new user."""
         # Extract the fields from the api.payload
         data = api.payload
@@ -126,14 +127,14 @@ class GradesByStudentAndClass(Resource):
     @require_authentication()
     @resolve_user
     @api.marshal_list_with(grades_model)
-    def get(self, class_id, user):
+    def get(self, class_id: int, user: User):
         """Get grades for a specific student in a specific class."""
         return get_grades_by_student_and_class_id(user.user_id, class_id)
 
     @api.expect(grades_model)
     @require_authentication("admin", "teacher")
     @resolve_user
-    def put(self, class_id, user):
+    def put(self, class_id: int, user: User):
         """Update a student's grade in a specific class."""
         data = api.payload
         if "grade" not in data:
@@ -152,7 +153,7 @@ class UserResource(Resource):
     @require_authentication()
     @resolve_user
     @api.marshal_with(user_model)
-    def get(self, user):
+    def get(self, user: User):
         """Fetch a user given its identifier."""
         return user
 
@@ -162,7 +163,7 @@ class UserResource(Resource):
     @require_authentication()
     @resolve_user
     @current_user_required
-    def put(self, user):
+    def put(self, user: User):
         """Update a user given its identifier."""
         if not update_user(user, api.payload):
             api.abort(400, "Error updating user.")
@@ -171,7 +172,7 @@ class UserResource(Resource):
     @api.doc(security="apikey")
     @api.response(204, "User deleted successfully")
     @require_authentication("admin")
-    def delete(self, user_id_or_me):
+    def delete(self, user_id_or_me: User):
         """Delete a user given its identifier."""
         print("Deleting user", user_id_or_me, flush=True)
         if not delete_user(int(user_id_or_me)):
@@ -188,7 +189,7 @@ class UserClassGroupsResource(Resource):
     @resolve_user
     @current_user_required
     @api.marshal_with(user_classgroups_model)
-    def get(self, user):
+    def get(self, user: User):
         """Get detailed information about a user by their ID, including class associations."""
         user_details = {
             "id": user.user_id,
@@ -220,7 +221,7 @@ class UserLessons(Resource):
     @resolve_user
     @current_user_required
     @api.marshal_list_with(fullcalendar_lesson_model)
-    def get(self, user):
+    def get(self, user: User):
         """Get a list of lessons for a specific student or teacher."""
         if user.is_student:
             lessons = get_student_lessons(user)
@@ -242,7 +243,7 @@ class UserFutureLessons(Resource):
     @current_user_required
     @api.expect(parser)
     @api.marshal_list_with(fullcalendar_lesson_model)
-    def get(self, user):
+    def get(self, user: User):
         """Get a list of future lessons for a specific student or teacher."""
         args = parser.parse_args()
         limit = args.get("limit")  # taking back the limit argument presents in the URL
@@ -276,7 +277,7 @@ class UserAssociationList(Resource):
     @require_authentication()
     @resolve_user
     @current_user_required
-    def get(self, user):
+    def get(self, user: User):
         """Get a list of all associations with subscription status for a specific user."""
         associations = get_all_assos()
 
@@ -292,7 +293,7 @@ class SubscribeAssociation(Resource):
     @require_authentication()
     @resolve_user
     @current_user_required
-    def post(self, user, asso_id):
+    def post(self, user: User, asso_id: int):
         """Subscribe a user to an association."""
         asso = get_user_by_id(asso_id)
         if not asso:
@@ -311,7 +312,7 @@ class UnsubscribeAssociation(Resource):
     @require_authentication()
     @resolve_user
     @current_user_required
-    def delete(self, user, asso_id):
+    def delete(self, user: User, asso_id: int):
         """Unsubscribe a user from an association."""
         asso = get_user_by_id(asso_id)
         if not asso:
@@ -331,7 +332,7 @@ class EnrollClass(Resource):
     @resolve_user
     @current_user_required
     @api.marshal_with(class_group_model)
-    def post(self, user, class_id):
+    def post(self, user: User, class_id: int):
         """Enroll a user in a class."""
         message, ugc_id = enroll_user_in_class(user.user_id, class_id)
         if message == "Success":
@@ -361,7 +362,7 @@ class UnenrollClass(Resource):
     @require_authentication()
     @resolve_user
     @current_user_required
-    def delete(self, user, class_id):
+    def delete(self, user: User, class_id: int):
         """Unenroll a user from a class."""
         result = unenroll_user_from_class(user.user_id, class_id)
         if result == "Success":
@@ -379,7 +380,7 @@ class UserEvents(Resource):
     @resolve_user
     @current_user_required
     @api.marshal_list_with(fullcalendar_event_model)
-    def get(self, user):
+    def get(self, user: User):
         """Get a list of events for a specific user."""
         if user.is_asso:
             events = get_association_events(user)
@@ -399,7 +400,7 @@ class UserFutureEvents(Resource):
     @current_user_required
     @api.expect(parser)
     @api.marshal_list_with(fullcalendar_event_model)
-    def get(self, user):
+    def get(self, user: User):
         """Get a list of future events for a specific user."""
         args = parser.parse_args()
         limit = args.get("limit")  # taking back the limit argument presents in the URL

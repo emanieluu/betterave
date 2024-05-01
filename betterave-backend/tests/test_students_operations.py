@@ -1,5 +1,8 @@
+"""Tests for the student operations module."""
+
 # type: ignore
 import pytest
+from betterave_backend.extensions import db
 from betterave_backend.app.models.class_group import ClassGroup
 from betterave_backend.app.models.user import User
 from betterave_backend.app.models.class_ import Class
@@ -25,7 +28,7 @@ STUDENT_NAME = ("Alice", "Smith")
 
 
 @pytest.fixture
-def setup_student(test_client):
+def setup_student(test_client) -> int:
     """Create a user and returns their ID."""
     student_id = add_user(
         STUDENT_NAME[0],
@@ -38,14 +41,14 @@ def setup_student(test_client):
 
 
 @pytest.fixture
-def setup_teacher(test_client):
+def setup_teacher(test_client) -> int:
     """Create a user and returns their ID."""
     student_id = add_user("John", "Doe", "teacher_pic_url", UserType.TEACHER, UserLevel.NA)
     return student_id
 
 
 @pytest.fixture
-def setup_class(test_client, setup_teacher):
+def setup_class(test_client, setup_teacher) -> int:
     """Fixture to create a class and return its instance."""
     class_id = add_class(
         class_id=101,
@@ -59,7 +62,7 @@ def setup_class(test_client, setup_teacher):
 
 
 @pytest.fixture
-def setup_group(test_client, setup_class):
+def setup_group(test_client, setup_class) -> int:
     """Fixture to create a class group within the setup class and return its ID."""
     group_id = add_class_group(name="Test Group", class_id=setup_class, is_main_group=True)
     yield group_id
@@ -69,7 +72,7 @@ def setup_group(test_client, setup_class):
 def test_get_student_groups(test_client, setup_student, setup_group, setup_class, setup_teacher):
     """Test getting class groups a student is enrolled in."""
     enroll_student_in_group(setup_student, setup_group)
-    student_groups = get_student_groups(User.query.get(setup_student))
+    student_groups = get_student_groups(db.session.get(User, setup_student))
     assert len(student_groups) >= 1
     assert setup_group in [group.group_id for group in student_groups]
 
@@ -78,14 +81,14 @@ def test_get_all_students(test_client, setup_student):
     """Test getting all student users."""
     all_students = get_all_students()
     assert len(all_students) >= 1
-    assert User.query.get(setup_student) in all_students
+    assert db.session.get(User, setup_student) in all_students
 
 
 def test_get_students_from_level(test_client, setup_student):
     """Test getting students from a specific level."""
     students_from_level = get_students_from_level(UserLevel._1A)
     assert len(students_from_level) >= 1
-    assert User.query.get(setup_student) in students_from_level
+    assert db.session.get(User, setup_student) in students_from_level
 
 
 def test_is_student_in_group(test_client, setup_student, setup_group):

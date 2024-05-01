@@ -1,5 +1,8 @@
+"""Tests for the lesson operations."""
+
 # type: ignore
 import pytest
+from betterave_backend.extensions import db
 from betterave_backend.app.models.user import User
 from betterave_backend.app.models import UserType, UserLevel
 from datetime import date, time, datetime
@@ -40,14 +43,14 @@ ROOM = "A1"
 
 
 @pytest.fixture
-def setup_teacher(test_client):
+def setup_teacher(test_client) -> int:
     """Create a user and returns their ID."""
     student_id = add_user("John", "Adams", "teacher_pic_url", UserType.TEACHER, UserLevel.NA)
     return student_id
 
 
 @pytest.fixture
-def setup_student(test_client):
+def setup_student(test_client) -> int:
     """Create a user and returns their ID."""
     student_id = add_user(
         STUDENT_NAME[0],
@@ -60,7 +63,7 @@ def setup_student(test_client):
 
 
 @pytest.fixture
-def setup_class(test_client, setup_teacher):
+def setup_class(test_client, setup_teacher) -> int:
     """Fixture to create a class and return its instance."""
     class_id = add_class(
         class_id=CLASS_ID,
@@ -74,7 +77,7 @@ def setup_class(test_client, setup_teacher):
 
 
 @pytest.fixture
-def setup_group(test_client, setup_class):
+def setup_group(test_client, setup_class) -> int:
     """Fixture to create a class group within the setup class and return its ID."""
     group_id = add_class_group(name=GROUP_NAME, class_id=setup_class, is_main_group=IS_MAIN_GROUP)
     yield group_id
@@ -82,7 +85,7 @@ def setup_group(test_client, setup_class):
 
 
 @pytest.fixture
-def setup_lesson(test_client, setup_group, setup_teacher):
+def setup_lesson(test_client, setup_group, setup_teacher) -> int:
     """Fixture to create a lesson and return its ID."""
     lesson_id = add_lesson(
         group_id=setup_group,
@@ -156,26 +159,26 @@ def test_get_lessons_by_class(test_client, setup_lesson, setup_class):
 
 def test_get_student_lessons(test_client, setup_lesson, setup_student):
     """Test getting lessons for a student."""
-    student_lessons = get_student_lessons(User.query.get(setup_student))
+    student_lessons = get_student_lessons(db.session.get(User, setup_student))
     assert student_lessons is not None
 
 
 def test_get_student_future_lessons(test_client, setup_lesson, setup_student):
     """Test getting future lessons for a student."""
-    student_future_lessons = get_student_future_lessons(User.query.get(setup_student))
+    student_future_lessons = get_student_future_lessons(db.session.get(User, setup_student))
     assert student_future_lessons is not None
     assert all(lesson.date >= datetime.now().date() for lesson in student_future_lessons)
 
 
 def test_get_teacher_lessons(test_client, setup_lesson, setup_teacher):
     """Test getting lessons for a teacher."""
-    teacher_lessons = get_teacher_lessons(User.query.get(setup_teacher))
+    teacher_lessons = get_teacher_lessons(db.session.get(User, setup_teacher))
     assert teacher_lessons is not None
     assert len(teacher_lessons) >= 1
 
 
 def test_get_teacher_future_lessons(test_client, setup_lesson, setup_teacher):
     """Test getting future lessons for a teacher."""
-    teacher_future_lessons = get_teacher_future_lessons(User.query.get(setup_teacher))
+    teacher_future_lessons = get_teacher_future_lessons(db.session.get(User, setup_teacher))
     assert teacher_future_lessons is not None
     assert all(lesson.date >= datetime.now().date() for lesson in teacher_future_lessons)

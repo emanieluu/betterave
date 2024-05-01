@@ -1,3 +1,5 @@
+"""Tests for the event operations."""
+
 # type: ignore
 import pytest
 from betterave_backend.app.models import User
@@ -29,21 +31,21 @@ PARTICIPANT_TYPE = "All users"
 
 
 @pytest.fixture
-def setup_student(test_client):
+def setup_student(test_client) -> int:
     """Create a student user and returns their ID."""
     student_id = add_user("John", "Mac", "student_pic_url", UserType.STUDENT, UserLevel._1A)
     return student_id
 
 
 @pytest.fixture
-def setup_asso(test_client):
+def setup_asso(test_client) -> int:
     """Create an asso user and returns their ID."""
     asso_id = add_user(ASSO_NAME, "", "asso_pic_url", UserType.ASSO, UserLevel.NA)
     return asso_id
 
 
 @pytest.fixture
-def setup_event(test_client, setup_asso):
+def setup_event(test_client, setup_asso) -> int:
     """Fixture to create an event and return its ID."""
     event_id = add_event(
         asso_id=setup_asso,

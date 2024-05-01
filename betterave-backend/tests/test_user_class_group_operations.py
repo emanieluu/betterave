@@ -1,3 +1,5 @@
+"""Tests for the user class groups operations."""
+
 # type: ignore
 import pytest
 from betterave_backend.app.models import UserType, UserLevel
@@ -6,15 +8,8 @@ from betterave_backend.app.operations.user_class_group_operations import (
     delete_user_class_group,
     get_user_class_group_by_id,
 )
-from betterave_backend.app.operations.class_group_operations import (
-    add_class_group,
-    delete_class_group,
-)
-from betterave_backend.app.operations.user_operations import (
-    add_user,
-    delete_user,
-    get_user_by_id,
-)
+from betterave_backend.app.operations.class_group_operations import add_class_group, delete_class_group
+from betterave_backend.app.operations.user_operations import add_user, delete_user, get_user_by_id
 from betterave_backend.app.operations.class_operations import add_class
 
 # Constants for the test
@@ -32,7 +27,7 @@ USER_LEVEL = UserLevel._1A
 
 
 @pytest.fixture
-def setup_teacher(test_client):
+def setup_teacher(test_client) -> int:
     """Create a user and returns their ID."""
     teacher_id = add_user("John", "Doe", "teacher_pic_url", UserType.TEACHER, UserLevel.NA)
     return teacher_id
@@ -83,12 +78,7 @@ def setup_user(test_client):
 
 
 @pytest.fixture
-def setup_user_class_group(
-    test_client,
-    setup_user,
-    setup_primary_class_group,
-    setup_secondary_class_group,
-):
+def setup_user_class_group(test_client, setup_user, setup_primary_class_group, setup_secondary_class_group) -> int:
     """Create a UserClassGroup and returns its ID."""
     user_class_group_id = add_user_class_group(
         user_id=setup_user,
