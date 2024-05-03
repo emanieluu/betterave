@@ -10,16 +10,26 @@ Link to the API : [api.betterave.kientz.net](https://api.betterave.kientz.net)
 
 ## Table of Contents
 
-- [Introduction](#betterave-pamplemousse-20)
+- [Table of Contents](#table-of-contents)
+- [**Better**ave: Pamplemousse 2.0](#betterave-pamplemousse-20)
 - [Features](#features)
 - [Repository Organization](#repository-organization)
 - [Database Structure](#database-structure)
 - [API Structure](#api-structure)
+  - [API Scripts Location](#api-scripts-location)
+  - [Key Files](#key-files)
 - [Frontend](#frontend)
-- [Code Standards](#code-standards)
+- [Code standards](#code-standards)
 - [Deployment](#deployment)
-- [Setup for Development](#setup-for-development)
+  - [Docker](#docker)
+  - [Server](#server)
+  - [DNS](#dns)
+- [Setup for development](#setup-for-development)
 - [Difficulties and Areas for Improvement](#difficulties-and-areas-for-improvement)
+- [Create a PostgreSQL instance on SSP Cloud](#create-a-postgresql-instance-on-ssp-cloud)
+- [Secrets Management on SSP Cloud](#secrets-management-on-ssp-cloud)
+  - [Creating and managing secrets](#creating-and-managing-secrets)
+  - [Convert secrets into environment variables](#convert-secrets-into-environment-variables)
 
 ## **Better**ave: Pamplemousse 2.0
 
@@ -84,7 +94,7 @@ The repository is structured into three main directories:
 
 This organization ensures a clear separation of concerns between the backend and frontend, providing an organized space for frontend components, visual elements, and scripts.
 
-## Database Stucture
+## Database Structure
 
 While coding the data structure, we incrementally added tables to fit new features. We first started off with only Students and Classes, and then realized the need for Lessons, Groups, etc.
 
@@ -237,3 +247,57 @@ docker compose logs
 ## Difficulties and Areas for Improvement
 
 - Notifications functionnality to be finished
+
+## Create a PostgreSQL instance on SSP Cloud
+
+To create a PostgreSQL instance on SSP Cloud, configure a new service `Postgresql` in the database services. When you click on the button `README`, you can see the hostname, port, database, username, and password to further use in secrets management.
+
+## Secrets Management on SSP Cloud
+
+#### Creating and managing secrets
+
+On SSPCloud, environment variables are secrets written in Vault (the Datalab strongbox) and are encrypted. We'll use this functionality to manage secrets (tokens, IDs, passwords, etc.).
+
+To get started :
+
+- Create a new folder _betterave_ in `My secrets`: `+ New folder`
+- Within this folder, create a new secret _postgresql_: `+ New secret`
+- Open your secret
+
+Each secret can contain several variables, made up of key-value pairs.
+
+- `+ Add a variable`
+- Fill in the key name field, then its value.
+
+To use a PostgreSQL database, you should define these variables:
+
+| Variable               | Description          |
+| ---------------------- | -------------------- |
+| POSTGRESQL_DB_NAME     | Name of the DB       |
+| POSTGRESQL_DB_HOST     | Host name of service |
+| POSTGRESQL_DB_PORT     | Port used by service |
+| POSTGRESQL_DB_USER     | Name of user         |
+| POSTGRESQL_DB_PASSWORD | Password of user     |
+
+#### Convert secrets into environment variables
+
+Once you've edited your secret, with its various variables, you're ready to use it in your service.
+
+- Copy the secret path: `onyxia-kv/username/betterave/postgresql`
+- Then, when configuring your service, go to the Vault tab and paste the secret's path into the dedicated field.
+- Create and open your service
+
+To check that your environment variables have been created correctly, you can run the following commands in the service terminal:
+
+```bash
+# List all available environment variables
+env
+
+# Display the value of an environment variable
+echo $MA_VARIABLE
+
+# Find all environment variables containing a given pattern
+env | grep -i "<PATTERN>"
+```
+
+More details on: https://inseefrlab.github.io/docs.sspcloud.fr/docs/fr/secrets.html

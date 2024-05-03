@@ -1,6 +1,8 @@
 """App factory module."""
 
 import os
+import subprocess
+import json
 
 from typing import Optional
 from flask import Flask
@@ -28,6 +30,11 @@ def load_user(user_id: int):  # type: ignore
     return User.query.get(int(user_id))
 
 
+def detect_ssp_cloud():
+    """Check if the app is running on SSP Cloud."""
+    return "/home/onyxia" in os.getenv("WORKSPACE_DIR", "")
+
+
 def create_app(db_test_path: Optional[str] = None) -> Flask:
     """Create the application instance."""
     print(f"Creating app from {os.getcwd()}", flush=True)
@@ -37,7 +44,29 @@ def create_app(db_test_path: Optional[str] = None) -> Flask:
     app = Flask(__name__)
     app.config["TESTING"] = db_test_path is not None
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or b"\x05\xe1C\x07k\x1ay<\xb6\xa4\xf8\xc6\xa8f\xb4*"
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_test_path if db_test_path else "sqlite:////database/betterave.db"
+
+    if detect_ssp_cloud():
+        print("Working on SSP Cloud...")
+        # Use the Vault secrets
+        VAULT_PATH = os.getenv("VAULT_RELATIVE_PATH")
+        result = subprocess.run(["vault", "kv", "get", "-format=json", VAULT_PATH], capture_output=True, text=True)
+        if result.returncode == 0:
+            secret_data = json.loads(result.stdout)["data"]["data"]
+        else:
+            print(f"Error fetching secret: {result.stderr}")
+
+        POSTGRES_PORT = secret_data["POSTGRES_PORT"]
+        POSTGRES_USER = secret_data["POSTGRES_USER"]
+        POSTGRES_PW = secret_data["POSTGRES_PW"]
+        POSTGRES_HOSTNAME = secret_data["POSTGRES_HOSTNAME"]
+        POSTGRES_DB = secret_data["POSTGRES_DB"]
+        app.config[
+            "SQLALCHEMY_DATABASE_URI"
+        ] = f"postgresql://{POSTGRES_USER}:{POSTGRES_PW}@{POSTGRES_HOSTNAME}:{POSTGRES_PORT}/{POSTGRES_DB}"
+
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = db_test_path if db_test_path else "sqlite:////database/betterave.db"
+
     app.config.update(
         DEBUG=True,
         SESSION_COOKIE_HTTPONLY=True,
